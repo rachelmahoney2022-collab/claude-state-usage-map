@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which states use Claude.ai more than expected?</title>
+<meta name="description" content="Claude.ai usage per capita index for the 50 states and D.C., May 2026.">
+<style>
+:root{
+  --bg:#faf9f5; --fg:#1f1e1d; --muted:#6b6862; --card:#fff; --line:#e4e1d8;
+  --c1:#b5441f; --c2:#e08a5c; --c3:#9fb8c9; --c4:#4f7391;
+}
+@media (prefers-color-scheme: dark){
+  :root{--bg:#1c1b19;--fg:#f1efe8;--muted:#a8a49a;--card:#262522;--line:#3a3833;
+    --c1:#e0734a;--c2:#e9a67f;--c3:#7f9db3;--c4:#4a6a85;}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1000px;margin:0 auto;padding:24px 16px 40px}
+h1{font-size:clamp(1.6rem,5vw,2.4rem);line-height:1.15;margin:0 0 8px}
+.lede{color:var(--muted);margin:0 0 20px;font-size:1.05rem}
+.grid{display:grid;grid-template-columns:1fr;gap:20px}
+@media(min-width:800px){.grid{grid-template-columns:1.9fr 1fr;align-items:start}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+#map{position:relative}
+svg{width:100%;height:auto;display:block}
+path.state{stroke:var(--bg);stroke-width:.8;cursor:pointer;transition:opacity .1s}
+path.state:hover,path.state.active{stroke:var(--fg);stroke-width:2}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 4px 2px;font-size:.85rem}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+#tip{position:fixed;pointer-events:none;background:var(--fg);color:var(--bg);padding:6px 10px;border-radius:8px;font-size:.9rem;line-height:1.3;opacity:0;transition:opacity .08s;z-index:5;white-space:nowrap}
+#tip b{display:block}
+h2{font-size:1.1rem;margin:4px 4px 8px}
+ol{list-style:none;margin:0;padding:0}
+li{display:grid;grid-template-columns:1.6em 1fr auto;gap:8px;align-items:center;padding:6px 4px;border-top:1px solid var(--line);cursor:pointer}
+li:first-child{border-top:0}
+li .n{color:var(--muted);font-variant-numeric:tabular-nums}
+li .v{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{grid-column:2/4;height:5px;border-radius:3px;background:var(--c1);margin-top:-2px}
+.src{color:var(--muted);font-size:.85rem;margin-top:24px}
+.src a{color:inherit}
+</style>
+</head>
+<body>
+<main>
+  <h1>Where Claude.ai gets used more than you’d expect</h1>
+  <p class="lede">An index of 1.0 means a state’s share of US Claude.ai use equals its share of US working-age people (ages 15–64).</p>
+  <div class="grid">
+    <section class="card" aria-label="Map of usage per capita index by state">
+      <div id="map"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+    <section class="card" aria-label="Top 10">
+      <h2>Top 10 (including D.C.)</h2>
+      <ol id="top"></ol>
+    </section>
+  </div>
+  <p class="src">Data: Anthropic Economic Index, Claude.ai conversations (Free, Pro and Max plans), May 2026, released June 26, 2026, under CC BY. Index is Claude.ai use per working-age person compared with the US average. <a href="https://www.anthropic.com/research/economic-index-june-2026-report">Source report</a>. Colors rank the 50 states and D.C. into four equal-ish groups.</p>
+</main>
+<div id="tip" role="status"></div>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
+<script>
+Promise.all([d3.json("states.json"), d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3.0.1/states-albers-10m.json")]).then(([rows, topo]) => {
+  const sorted = rows.slice().sort((a,b)=>b.index-a.index);
+  const N = sorted.length;
+  const groups = [
+    {name:"Leading (top 25%)", color:"var(--c1)"},
+    {name:"Upper middle", color:"var(--c2)"},
+    {name:"Lower middle", color:"var(--c3)"},
+    {name:"Emerging (bottom 25%)", color:"var(--c4)"}
+  ];
+  const byName = new Map();
+  sorted.forEach((r,i)=>{ r.rank=i+1; r.group=Math.floor(i*4/N); byName.set(r.name,r); });
+  const fmt = v => v.toFixed(2);
+
+  const feats = topojson.feature(topo, topo.objects.states).features;
+  const svg = d3.select("#map").append("svg").attr("viewBox","0 0 975 610").attr("role","img")
+    .attr("aria-label","US map colored by usage per capita index rank");
+  const tip = document.getElementById("tip");
+  let pinned = null;
+  const show = (d, x, y) => {
+    tip.innerHTML = `<b>${d.name}</b>${fmt(d.index)} · rank ${d.rank} of ${N}`;
+    tip.style.opacity = 1;
+    const w = tip.offsetWidth;
+    tip.style.left = Math.max(8, Math.min(innerWidth - w - 8, x - w/2)) + "px";
+    tip.style.top = Math.max(8, y - 56) + "px";
+  };
+  const hide = () => { tip.style.opacity = 0; };
+
+  svg.selectAll("path").data(feats).join("path")
+    .attr("class","state").attr("d", d3.geoPath())
+    .attr("fill", f => groups[byName.get(f.properties.name).group].color)
+    .attr("tabindex",0)
+    .attr("aria-label", f => { const r=byName.get(f.properties.name); return `${r.name}, ${fmt(r.index)}`; })
+    .on("pointermove", (e,f) => show(byName.get(f.properties.name), e.clientX, e.clientY))
+    .on("pointerleave", () => { if(e_touch) return; hide(); })
+    .on("click", (e,f) => { show(byName.get(f.properties.name), e.clientX, e.clientY); e.stopPropagation(); })
+    .on("focus", (e,f) => { const b=e.target.getBoundingClientRect(); show(byName.get(f.properties.name), b.x+b.width/2, b.y); })
+    .on("blur", hide);
+  let e_touch = false;
+  addEventListener("pointerdown", e => { e_touch = e.pointerType === "touch"; if(!e.target.closest("path.state")) hide(); });
+
+  d3.select("#legend").selectAll("span").data(groups).join("span")
+    .html(g => `<i class="sw" style="background:${g.color}"></i>${g.name}`);
+
+  const top = sorted.slice(0,10), max = top[0].index;
+  d3.select("#top").selectAll("li").data(top).join("li")
+    .html(d => `<span class="n">${d.rank}</span><span>${d.name}</span><span class="v">${fmt(d.index)}</span><i class="bar" style="width:${d.index/max*100}%"></i>`)
+    .on("click", (e,d) => {
+      const p = svg.selectAll("path").filter(f=>f.properties.name===d.name).node();
+      const b = p.getBoundingClientRect(); show(d, b.x+b.width/2, b.y+b.height/2);
+    });
+});
+</script>
+</body>
+</html>

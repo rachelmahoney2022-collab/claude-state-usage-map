@@ -1,0 +1,53 @@
+[
+{"code":"AL","name":"Alabama","index":0.47}
+,{"code":"AK","name":"Alaska","index":0.51}
+,{"code":"AZ","name":"Arizona","index":0.95}
+,{"code":"AR","name":"Arkansas","index":0.39}
+,{"code":"CA","name":"California","index":1.62}
+,{"code":"CO","name":"Colorado","index":1.41}
+,{"code":"CT","name":"Connecticut","index":1.07}
+,{"code":"DE","name":"Delaware","index":1.05}
+,{"code":"DC","name":"District of Columbia","index":3.32}
+,{"code":"FL","name":"Florida","index":1.05}
+,{"code":"GA","name":"Georgia","index":0.93}
+,{"code":"HI","name":"Hawaii","index":1.14}
+,{"code":"ID","name":"Idaho","index":0.68}
+,{"code":"IL","name":"Illinois","index":1.0}
+,{"code":"IN","name":"Indiana","index":0.61}
+,{"code":"IA","name":"Iowa","index":0.41}
+,{"code":"KS","name":"Kansas","index":0.48}
+,{"code":"KY","name":"Kentucky","index":0.39}
+,{"code":"LA","name":"Louisiana","index":0.48}
+,{"code":"ME","name":"Maine","index":0.65}
+,{"code":"MD","name":"Maryland","index":1.09}
+,{"code":"MA","name":"Massachusetts","index":1.42}
+,{"code":"MI","name":"Michigan","index":0.61}
+,{"code":"MN","name":"Minnesota","index":0.81}
+,{"code":"MS","name":"Mississippi","index":0.28}
+,{"code":"MO","name":"Missouri","index":0.7}
+,{"code":"MT","name":"Montana","index":0.58}
+,{"code":"NE","name":"Nebraska","index":0.63}
+,{"code":"NV","name":"Nevada","index":1.13}
+,{"code":"NH","name":"New Hampshire","index":0.88}
+,{"code":"NJ","name":"New Jersey","index":1.02}
+,{"code":"NM","name":"New Mexico","index":0.49}
+,{"code":"NY","name":"New York","index":1.55}
+,{"code":"NC","name":"North Carolina","index":0.88}
+,{"code":"ND","name":"North Dakota","index":0.37}
+,{"code":"OH","name":"Ohio","index":0.59}
+,{"code":"OK","name":"Oklahoma","index":0.53}
+,{"code":"OR","name":"Oregon","index":1.1}
+,{"code":"PA","name":"Pennsylvania","index":0.8}
+,{"code":"RI","name":"Rhode Island","index":0.96}
+,{"code":"SC","name":"South Carolina","index":0.51}
+,{"code":"SD","name":"South Dakota","index":0.37}
+,{"code":"TN","name":"Tennessee","index":0.69}
+,{"code":"TX","name":"Texas","index":0.95}
+,{"code":"UT","name":"Utah","index":1.21}
+,{"code":"VT","name":"Vermont","index":0.87}
+,{"code":"VA","name":"Virginia","index":1.07}
+,{"code":"WA","name":"Washington","index":1.51}
+,{"code":"WV","name":"West Virginia","index":0.25}
+,{"code":"WI","name":"Wisconsin","index":0.59}
+,{"code":"WY","name":"Wyoming","index":0.43}
+]
